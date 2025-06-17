@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+/* Transiciones para el sidebar móvil */
+.sidebar-transition {
+  transition: transform 0.3s ease;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* Estilos para dark mode */
+.dark {
+  @apply bg-gray-900 text-gray-100;
+}
