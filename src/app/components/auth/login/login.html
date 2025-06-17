@@ -18,12 +18,14 @@
           <div class="space-y-4">
             <input
               type="text"
+              id="username"
               placeholder="Nombre de Usuario"
               [(ngModel)]="credentials.username"
-              name="usurname"
+              name="username"
               class="bg-[#8777BA] w-full p-2.5 rounded-md placeholder:text-gray-300 shadow-md shadow-blue-950" />
             <input
               type="password"
+              id="password"
               placeholder="Contraseña"
               [(ngModel)]="credentials.password"
               name="password"
@@ -36,15 +38,22 @@
           </div>
           <div class="flex justify-center mb-4">
             <!--<button (click)="navigateToDashboard()"-->
-            <button (click)="navigateToDashboard()"
+            <!--<button (click)="navigateToDashboard()"
               type="submit"
               class="h-10 w-full cursor-pointer text-white rounded-md bg-gradient-to-br from-[#7336FF] to-[#3269FF] shadow-md shadow-blue-950">
               Iniciar sesión
+            </button>-->
+            <button type="submit" [disabled]="isLoading"
+              class="h-10 w-full cursor-pointer text-white rounded-md bg-gradient-to-br from-[#7336FF] to-[#3269FF] shadow-md shadow-blue-950">
+
+              {{ isLoading ? 'Cargando...' : 'Iniciar sesión' }}
             </button>
           </div>
         </form>
-        <div class="text-gray-300 text-center">
-            No tienes una cuenta?
+        <div class="text-gray-300 text-center" *ngIf="errorMessage" class="error-message"
+        >{{ errorMessage }}
+
+          No tienes una cuenta?
             <a (click)="navigateToRegister()" class="text-[#228CE0] cursor-pointer">Regístrate</a>
           </div>
       </div>

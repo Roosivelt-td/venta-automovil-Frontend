@@ -1,8 +1,8 @@
 // auth.ts
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable, of} from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -10,17 +10,35 @@ import { tap, catchError } from 'rxjs/operators';
 })
 export class AuthService {
 
-  private apiUrl = 'https://localhost:8080/api/auth';  // Reemplaza con tu endpoint real
-  // private isAuthenticated$: Observable<boolean>;
+  private apiUrl = 'http://localhost:8080/api/auth'; // Asegúrese de usar http:// no https://
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   login(credentials: { username: string, password: string }): Observable<any> {
-    return this.http.post<{token: string}>(`${this.apiUrl}/login`, credentials).pipe(
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json');
+
+    return this.http.post<any>(
+      `${this.apiUrl}/login`,
+      credentials,
+      {
+        headers: headers,
+        withCredentials: true
+      }
+    ).pipe(
       tap(response => {
         if (response.token) {
           localStorage.setItem('auth_token', response.token);
+          console.log('Token almacenado exitosamente');
         }
+      }),
+      catchError(error => {
+        console.error('Error en la autenticación:', error);
+        throw error;
       })
     );
   }
@@ -30,7 +48,6 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
-
 
   logout() {
     localStorage.removeItem('auth_token');
