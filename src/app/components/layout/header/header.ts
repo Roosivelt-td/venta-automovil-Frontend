@@ -1,5 +1,4 @@
-// components/layout/header/header.ts
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output, Input, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth';
 
@@ -11,5 +10,37 @@ import { AuthService } from '../../../services/auth';
   styleUrls: ['./header.css']
 })
 export class HeaderComponent {
+  @Input() isSidebarOpen = false;
+  @Output() toggleSidebar = new EventEmitter<void>();
+
+  isUserMenuOpen = false;
+  window = window;
+
   constructor(private authService: AuthService) {}
+
+  onToggleSidebar(): void {
+    this.toggleSidebar.emit();
+  }
+
+  toggleUserMenu(): void {
+    this.isUserMenuOpen = !this.isUserMenuOpen;
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
+
+  // Cerrar menú de usuario al hacer clic fuera
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const userMenuElement = (event.target as HTMLElement).closest('.user-menu');
+    if (!userMenuElement) {
+      this.isUserMenuOpen = false;
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.isUserMenuOpen = false;
+  }
 }
