@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../services/auth';
 
 @Component({
@@ -12,11 +11,23 @@ import { AuthService } from '../../../services/auth';
   styleUrl: './sidebar.css'
 })
 export class SidebarComponent {
+  @Input() isSidebarHidden = false;
+  @Output() closeSidebar = new EventEmitter<void>();
+  isAutoMenuOpen = false;
+
   constructor(private authService: AuthService, private router: Router) {}
+
+  toggleAutoMenu() {
+    this.isAutoMenuOpen = !this.isAutoMenuOpen;
+  }
+
+  onCloseSidebar(): void {
+    this.closeSidebar.emit();
+  }
+
 
   logout() {
     this.authService.logout();
   }
-  toggleDropdown() {
-    this.router.navigate(['/analytics']);}
+
 }
