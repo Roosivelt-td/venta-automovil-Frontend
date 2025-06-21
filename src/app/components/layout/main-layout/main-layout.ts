@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterModule } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar';
 import { HeaderComponent } from '../header/header';
-import { MainContentComponent } from '../main-content/main-content';
 import {AuthService} from '../../../services/auth';
-import {Observable} from 'rxjs';
 
 
 @Component({
@@ -17,9 +15,29 @@ import {Observable} from 'rxjs';
 })
 export class MainLayoutComponent {
   isAuthenticated = false;
+  isSidebarHidden = false;
 
   constructor(private authService: AuthService) {
     // Usa el método isLoggedIn en lugar de isAuthenticated$
     this.isAuthenticated = this.authService.isLoggedIn();
   }
+
+  ngOnInit() {
+    // Ocultar sidebar por defecto en móvil
+    this.checkScreenSize();
+    window.addEventListener('resize', () => this.checkScreenSize());
+  }
+
+  private checkScreenSize() {
+    if (window.innerWidth < 768) {  // 768px es el breakpoint md de Tailwind
+      this.isSidebarHidden = true;
+    } else {
+      this.isSidebarHidden = false;
+    }
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarHidden = !this.isSidebarHidden;
+  }
+
 }
