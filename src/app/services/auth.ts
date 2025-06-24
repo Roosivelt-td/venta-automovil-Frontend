@@ -1,21 +1,20 @@
 // auth.ts
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of} from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
+import {ApiUrlService} from '../config/ApiUrlService';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:8080/api/auth'; // Asegúrese de usar http:// no https://
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private apiUrl = inject(ApiUrlService);
 
-  constructor(
-    private http: HttpClient,
-    private router: Router
-  ) {}
 
   login(credentials: { username: string, password: string }): Observable<any> {
     const headers = new HttpHeaders()
@@ -23,9 +22,11 @@ export class AuthService {
       .set('Accept', 'application/json');
 
     return this.http.post<any>(
-      `${this.apiUrl}/login`,
+      // Aquí está la corrección: usar el método getUrl
+      `${this.apiUrl.getUrl('auth')}/login`,
       credentials,
       {
+
         headers: headers,
         withCredentials: true
       }
@@ -88,4 +89,6 @@ export class AuthService {
       })
     );
   }
+
+
 }

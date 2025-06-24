@@ -5,9 +5,9 @@ import { RegisterComponent } from './components/auth/register/register';
 import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './components/auth/reset-password/reset-password';
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout';
-import { DashboardComponent } from './components/dashboard/dashboard/dashboard';
-import { ComprasListComponent } from './components/dashboard/compras/compras-list/compras-list';
+import { DashboardComponent } from './components/dashboard/dashboard/dashboard';import { ComprasListComponent } from './components/dashboard/compras/compras-list/compras-list';
 import { AuthGuard } from './guards/auth.guard';
+import {UsuarioList} from './components/dashboard/usuario-list/usuario-list';
 
 export const routes: Routes = [
     // Rutas públicas (sin layout)
@@ -25,7 +25,7 @@ export const routes: Routes = [
       children: [
         { path: 'dashboard', component: DashboardComponent },
         { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-
+        { path: 'usuarios', component: UsuarioList },
         { path: 'compras', component: ComprasListComponent },
         { path: 'compra', redirectTo: 'compras' },
 
