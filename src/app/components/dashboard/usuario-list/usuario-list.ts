@@ -1,38 +1,37 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import {UsuarioService} from '../../../services/usuario';
+import { Usuario } from '../../../models/usuario';
 import { CommonModule } from '@angular/common';
 
+
 @Component({
-  selector: 'app-register',
+  selector: 'app-usuario-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './usuario-list.html',
   styleUrl: './usuario-list.css'
 })
 export class UsuarioList {
-  registerData = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    termsAccepted: false
-  };
+  usuarios: Usuario[] = [];
 
-  showPassword = false;
+  constructor(private usuarioService: UsuarioService) { }
 
-  constructor(private router: Router) {}
-
-  togglePassword() {
-    this.showPassword = !this.showPassword;
+  ngOnInit(): void {
+    this.loadUsuarios();
   }
 
-  onSubmit() {
-    console.log('Registration data:', this.registerData);
-    // Aquí iría la lógica para enviar los datos al servidor
-    // Por ahora solo redirigimos al login
-    this.router.navigate(['/login']);
+  loadUsuarios(): void {
+    this.usuarioService.getUsuarios().subscribe(
+      (data: Usuario[]) => {
+        this.usuarios = data;
+      },
+      (error) => {
+        console.error('Error al cargar usuarios:', error);
+      }
+    );
   }
-  navigateToLogin() {
-  this.router.navigate(['/login']);}
+
+  crearUsuario() {
+
+  }
 }

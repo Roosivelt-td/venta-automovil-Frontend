@@ -29,7 +29,8 @@ export class SidebarComponent {
     this.authService.logout();
   }
 
-  navigateToUsuarios() {
-    this.router.navigate(['../../dashboard/usuario-list']);
+  loadUsuarios() {
+    this.router.navigate(['/usuarios']);
   }
+
 }

@@ -17,6 +17,7 @@ export const API_CONFIG = new InjectionToken<ApiConfig>('api.config', {
       auth: '/auth',
       usuarios: '/usuarios',
       compras: '/compras'
+
     }
   })
 });
