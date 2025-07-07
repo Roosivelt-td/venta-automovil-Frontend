@@ -25,9 +25,11 @@ export class SidebarComponent {
     this.closeSidebar.emit();
   }
 
-
   logout() {
     this.authService.logout();
   }
 
+  navigateToUsuarios() {
+    this.router.navigate(['/dashboard/usuarios']);
+  }
 }

@@ -1,0 +1,9 @@
+/* Estilos para el modal de editar proveedor */
+
+:host ::ng-deep .bg-blue-600 {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+:host ::ng-deep .bg-blue-700 {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+} 

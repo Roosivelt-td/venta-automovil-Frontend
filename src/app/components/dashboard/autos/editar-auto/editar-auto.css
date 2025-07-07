@@ -1,0 +1,8 @@
+/* Puedes reutilizar los estilos de agregar-auto para mantener la coherencia visual */
+
+:host ::ng-deep .bg-yellow-600 {
+  background: linear-gradient(135deg, #f59e42 0%, #d97706 100%);
+}
+:host ::ng-deep .bg-yellow-700 {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+} 

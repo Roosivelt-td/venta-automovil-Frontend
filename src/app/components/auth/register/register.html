@@ -32,17 +32,31 @@
           <a (click)="navigateToLogin()" class="text-white hover:underline">Iniciar sesión</a> 
         </p>
 
+        <!-- Mensaje de error -->
+        <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">
+          {{ errorMessage }}
+        </div>
+
         <form (ngSubmit)="onSubmit()" class="space-y-4">
+          <!-- Nombre y Apellido -->
           <div class="flex flex-col md:flex-row gap-4">
-            <input type="text" placeholder="First name" [(ngModel)]="registerData.firstName" name="firstName"
+            <input type="text" placeholder="Nombre" [(ngModel)]="registerData.firstName" name="firstName" required
                    class="w-full md:w-1/2 bg-[#1c1c24] text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600">
-            <input type="text" placeholder="Last name" [(ngModel)]="registerData.lastName" name="lastName"
+            <input type="text" placeholder="Apellido" [(ngModel)]="registerData.lastName" name="lastName" required
                    class="w-full md:w-1/2 bg-[#1c1c24] text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600">
           </div>
-          <input type="email" placeholder="Email" [(ngModel)]="registerData.email" name="email"
+
+          <!-- Username -->
+          <input type="text" placeholder="Nombre de usuario (opcional)" [(ngModel)]="registerData.username" name="username"
                  class="w-full bg-[#1c1c24] text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600">
+
+          <!-- Email -->
+          <input type="email" placeholder="Email" [(ngModel)]="registerData.email" name="email" required
+                 class="w-full bg-[#1c1c24] text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600">
+
+          <!-- Contraseña -->
           <div class="relative">
-            <input [type]="showPassword ? 'text' : 'password'" placeholder="Enter your password" [(ngModel)]="registerData.password" name="password"
+            <input [type]="showPassword ? 'text' : 'password'" placeholder="Contraseña" [(ngModel)]="registerData.password" name="password" required
                    class="w-full bg-[#1c1c24] text-white rounded-lg p-3 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-600">
             <button type="button" (click)="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -52,14 +66,35 @@
             </button>
           </div>
 
+          <!-- Sexo -->
+          <select [(ngModel)]="registerData.sexo" name="sexo" required
+                  class="w-full bg-[#1c1c24] text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600">
+            <option value="">Seleccionar sexo</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+
+          <!-- Dirección -->
+          <input type="text" placeholder="Dirección" [(ngModel)]="registerData.direccion" name="direccion" required
+                 class="w-full bg-[#1c1c24] text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600">
+
+          <!-- Celular -->
+          <input type="tel" placeholder="Celular" [(ngModel)]="registerData.celular" name="celular" required
+                 class="w-full bg-[#1c1c24] text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-600">
+
+          <!-- Términos y condiciones -->
           <label class="flex items-center space-x-2 cursor-pointer">
-            <input type="checkbox" [(ngModel)]="registerData.termsAccepted" name="termsAccepted"
+            <input type="checkbox" [(ngModel)]="registerData.termsAccepted" name="termsAccepted" required
                    class="rounded bg-[#1c1c24] border-gray-600 text-purple-600 focus:ring-purple-600">
             <span class="text-gray-400">Estoy de acuerdo con el <a href="#" class="text-white hover:underline">Términos y Condiciones</a></span>
           </label>
 
-          <button type="submit" class="w-full bg-purple-600 text-white rounded-lg p-3 hover:bg-purple-700 transition-colors">
-            Crear cuenta
+          <!-- Botón de registro -->
+          <button type="submit" [disabled]="isLoading" 
+                  class="w-full bg-purple-600 text-white rounded-lg p-3 hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <span *ngIf="!isLoading">Crear cuenta</span>
+            <span *ngIf="isLoading">Creando cuenta...</span>
           </button>
 
           <div class="relative my-8">

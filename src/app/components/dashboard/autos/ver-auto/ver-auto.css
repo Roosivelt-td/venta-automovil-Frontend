@@ -1,0 +1,17 @@
+/* Estilos para el modal de visualización de auto */
+
+:host ::ng-deep .bg-blue-600 {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+:host ::ng-deep .bg-green-600 {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+:host ::ng-deep .bg-yellow-600 {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+}
+
+:host ::ng-deep .bg-purple-600 {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+} 

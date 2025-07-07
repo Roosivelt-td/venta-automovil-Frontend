@@ -1,0 +1,407 @@
+<main class="container mx-auto p-6 flex-grow">
+  <!-- Header con navegación -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800">
+        <i class="fas fa-cart-plus text-blue-600 mr-3"></i>
+        Registrar Nueva Venta
+      </h1>
+      <p class="text-gray-600 mt-2">Complete los datos para registrar una nueva venta de automóvil</p>
+    </div>
+    <button (click)="cancelar()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200">
+      <i class="fas fa-arrow-left mr-2"></i> Volver
+    </button>
+  </div>
+
+
+
+  <!-- Progreso del formulario -->
+  <div class="mb-8">
+    <div class="flex items-center justify-center">
+      <div class="flex items-center">
+        <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+          1
+        </div>
+        <div class="ml-3">
+          <div class="font-semibold text-gray-800">Cliente</div>
+          <div class="text-sm text-gray-600">Seleccionar o registrar cliente</div>
+        </div>
+      </div>
+      <div class="w-16 h-1 bg-gray-300 mx-4"></div>
+      <div class="flex items-center">
+        <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">
+          2
+        </div>
+        <div class="ml-3">
+          <div class="font-semibold text-gray-600">Venta</div>
+          <div class="text-sm text-gray-500">Detalles de la venta</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paso 1: Selección de Cliente -->
+  <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+    <div class="flex items-center mb-6">
+      <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+        <i class="fas fa-user text-white text-sm"></i>
+      </div>
+      <h2 class="text-xl font-semibold text-gray-800">Paso 1: Seleccionar Cliente</h2>
+    </div>
+
+    <!-- Búsqueda de cliente por DNI -->
+    <div *ngIf="!clienteSeleccionado && !mostrarFormularioCliente" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+      <div class="flex items-center mb-4">
+        <i class="fas fa-search text-blue-600 text-xl mr-3"></i>
+        <h3 class="text-lg font-semibold text-gray-800">Buscar Cliente Existente</h3>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-id-card mr-1"></i> DNI del Cliente
+          </label>
+          <input 
+            type="number" 
+            [(ngModel)]="dniBusqueda" 
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" 
+            placeholder="Ingrese DNI (8 dígitos)">
+        </div>
+        <div class="flex gap-2">
+          <button 
+            (click)="buscarClientePorDni()" 
+            [disabled]="!dniBusqueda"
+            class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+            <i class="fas fa-search mr-2"></i>
+            Buscar
+          </button>
+          <button 
+            (click)="mostrarFormularioNuevoCliente()" 
+            class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center">
+            <i class="fas fa-plus mr-2"></i>
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario de nuevo cliente -->
+    <div *ngIf="mostrarFormularioCliente" class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center">
+          <i class="fas fa-user-plus text-green-600 text-xl mr-3"></i>
+          <h3 class="text-lg font-semibold text-gray-800">Registrar Nuevo Cliente</h3>
+        </div>
+        <button 
+          (click)="mostrarFormularioCliente = false" 
+          class="text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <form [formGroup]="clienteForm" (ngSubmit)="registrarCliente()" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-user mr-1"></i> Nombre Completo *
+            </label>
+            <input 
+              type="text" 
+              formControlName="nombre" 
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+              placeholder="Ingrese nombre completo">
+            <div *ngIf="clienteForm.get('nombre')?.invalid && clienteForm.get('nombre')?.touched" class="text-red-600 text-sm mt-1">
+              <i class="fas fa-exclamation-circle mr-1"></i> El nombre es requerido
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-id-card mr-1"></i> DNI *
+            </label>
+            <input 
+              type="number" 
+              formControlName="dni" 
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+              placeholder="8 dígitos">
+            <div *ngIf="clienteForm.get('dni')?.invalid && clienteForm.get('dni')?.touched" class="text-red-600 text-sm mt-1">
+              <i class="fas fa-exclamation-circle mr-1"></i> DNI debe tener 8 dígitos
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-phone mr-1"></i> Teléfono *
+            </label>
+            <input 
+              type="tel" 
+              formControlName="telefono" 
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+              placeholder="Número de teléfono">
+            <div *ngIf="clienteForm.get('telefono')?.invalid && clienteForm.get('telefono')?.touched" class="text-red-600 text-sm mt-1">
+              <i class="fas fa-exclamation-circle mr-1"></i> El teléfono es requerido
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-envelope mr-1"></i> Correo Electrónico *
+            </label>
+            <input 
+              type="email" 
+              formControlName="correo" 
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+              placeholder="correo@ejemplo.com">
+            <div *ngIf="clienteForm.get('correo')?.invalid && clienteForm.get('correo')?.touched" class="text-red-600 text-sm mt-1">
+              <i class="fas fa-exclamation-circle mr-1"></i> Ingrese un correo válido
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-map-marker-alt mr-1"></i> Dirección *
+          </label>
+          <input 
+            type="text" 
+            formControlName="direccion" 
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+            placeholder="Dirección completa">
+          <div *ngIf="clienteForm.get('direccion')?.invalid && clienteForm.get('direccion')?.touched" class="text-red-600 text-sm mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i> La dirección es requerida
+          </div>
+        </div>
+        
+        <div class="flex justify-end gap-3 pt-4">
+          <button 
+            type="button" 
+            (click)="mostrarFormularioCliente = false" 
+            class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200">
+            <i class="fas fa-times mr-2"></i> Cancelar
+          </button>
+          <button 
+            type="submit" 
+            [disabled]="clienteForm.invalid"
+            class="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition duration-200">
+            <i class="fas fa-save mr-2"></i> Registrar Cliente
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Cliente seleccionado -->
+    <div *ngIf="clienteSeleccionado" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mr-4">
+            <i class="fas fa-user-check text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-800">{{ clienteSeleccionado.nombre }}</h3>
+            <p class="text-gray-600">DNI: {{ clienteSeleccionado.dni }} | Tel: {{ clienteSeleccionado.telefono }}</p>
+          </div>
+        </div>
+        <button 
+          (click)="clienteSeleccionado = null; ventaForm.get('clienteId')?.setValue(null)" 
+          class="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50 transition duration-200">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paso 2: Detalles de la Venta -->
+  <div *ngIf="clienteSeleccionado" class="bg-white rounded-xl shadow-lg p-6">
+    <div class="flex items-center mb-6">
+      <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
+        <i class="fas fa-car text-white text-sm"></i>
+      </div>
+      <h2 class="text-xl font-semibold text-gray-800">Paso 2: Detalles de la Venta</h2>
+    </div>
+
+    <form [formGroup]="ventaForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <!-- Información del cliente -->
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="flex items-center mb-3">
+          <i class="fas fa-user text-blue-600 mr-2"></i>
+          <span class="font-semibold text-gray-800">Cliente Seleccionado</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-lg font-medium text-gray-800">{{ clienteSeleccionado.nombre }}</p>
+            <p class="text-gray-600">DNI: {{ clienteSeleccionado.dni }}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm text-gray-500">Teléfono</p>
+            <p class="font-medium">{{ clienteSeleccionado.telefono }}</p>
+          </div>
+        </div>
+        <input type="hidden" formControlName="clienteId" [value]="clienteSeleccionado.identificador">
+      </div>
+
+      <!-- Selección de auto -->
+      <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-car text-purple-600 text-xl mr-3"></i>
+          <h3 class="text-lg font-semibold text-gray-800">Seleccionar Automóvil</h3>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-car mr-1"></i> Automóvil *
+            </label>
+            <select 
+              formControlName="autoId" 
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200">
+              <option value="">Seleccione un automóvil</option>
+              <option *ngFor="let auto of autos" [value]="auto.id" [disabled]="auto.stock <= 0">
+                {{ auto.marca }} {{ auto.modelo }} ({{ auto.anio }}) - Stock: {{ auto.stock }} - S/ {{ auto.precio | number:'1.2-2' }}
+              </option>
+            </select>
+            <div *ngIf="ventaForm.get('autoId')?.invalid && ventaForm.get('autoId')?.touched" class="text-red-600 text-sm mt-1">
+              <i class="fas fa-exclamation-circle mr-1"></i> Por favor seleccione un automóvil
+            </div>
+            <p class="text-sm text-gray-600 mt-2">
+              <i class="fas fa-info-circle mr-1"></i> Solo se muestran automóviles con stock disponible
+            </p>
+          </div>
+          
+          <div class="bg-white rounded-lg p-4 border border-purple-200">
+            <h4 class="font-semibold text-gray-800 mb-3">Información del Stock</h4>
+                         <div class="space-y-2">
+               <div class="flex justify-between">
+                 <span class="text-gray-600">Total de autos:</span>
+                 <span class="font-medium">{{ totalAutos }}</span>
+               </div>
+               <div class="flex justify-between">
+                 <span class="text-gray-600">Con stock:</span>
+                 <span class="font-medium text-green-600">{{ autosConStock }}</span>
+               </div>
+               <div class="flex justify-between">
+                 <span class="text-gray-600">Sin stock:</span>
+                 <span class="font-medium text-red-600">{{ autosSinStock }}</span>
+               </div>
+             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detalles de la venta -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-calendar mr-1"></i> Fecha de Venta *
+          </label>
+          <input 
+            type="date" 
+            formControlName="fechaVenta" 
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
+          <div *ngIf="ventaForm.get('fechaVenta')?.invalid && ventaForm.get('fechaVenta')?.touched" class="text-red-600 text-sm mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i> Por favor seleccione una fecha
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-dollar-sign mr-1"></i> Precio de Venta *
+          </label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">S/</span>
+            <input 
+              type="number" 
+              formControlName="precioVenta" 
+              step="0.01"
+              min="0"
+              class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              placeholder="0.00">
+          </div>
+          <div *ngIf="ventaForm.get('precioVenta')?.invalid && ventaForm.get('precioVenta')?.touched" class="text-red-600 text-sm mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i> Ingrese un precio válido
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-credit-card mr-1"></i> Método de Pago *
+          </label>
+          <select 
+            formControlName="metodoPago" 
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200">
+            <option value="">Seleccione método</option>
+            <option value="Efectivo">💵 Efectivo</option>
+            <option value="Tarjeta de Crédito">💳 Tarjeta de Crédito</option>
+            <option value="Tarjeta de Débito">💳 Tarjeta de Débito</option>
+            <option value="Transferencia">🏦 Transferencia</option>
+            <option value="Cheque">📄 Cheque</option>
+          </select>
+          <div *ngIf="ventaForm.get('metodoPago')?.invalid && ventaForm.get('metodoPago')?.touched" class="text-red-600 text-sm mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i> Por favor seleccione un método de pago
+          </div>
+        </div>
+      </div>
+
+      <!-- Observaciones -->
+      <div class="bg-gray-50 rounded-lg p-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          <i class="fas fa-sticky-note mr-1"></i> Observaciones Adicionales
+        </label>
+        <textarea 
+          formControlName="observaciones" 
+          rows="3"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 resize-none"
+          placeholder="Agregue observaciones adicionales sobre la venta (opcional)..."></textarea>
+      </div>
+
+      <!-- Resumen de la venta -->
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-receipt text-blue-600 mr-2"></i>
+          Resumen de la Venta
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white rounded-lg p-4 border border-blue-200">
+            <div class="text-sm text-gray-600">Cliente</div>
+            <div class="font-semibold text-gray-800">{{ clienteSeleccionado.nombre }}</div>
+          </div>
+                     <div class="bg-white rounded-lg p-4 border border-blue-200">
+             <div class="text-sm text-gray-600">Auto Seleccionado</div>
+             <div class="font-semibold text-gray-800">
+               {{ autoSeleccionadoInfo }}
+             </div>
+           </div>
+          <div class="bg-white rounded-lg p-4 border border-blue-200">
+            <div class="text-sm text-gray-600">Precio</div>
+            <div class="font-semibold text-green-600">S/ {{ ventaForm.get('precioVenta')?.value || '0.00' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="flex justify-end gap-4 pt-6 border-t border-gray-200">
+        <button 
+          type="button" 
+          (click)="cancelar()" 
+          [disabled]="loading"
+          class="bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition duration-200">
+          <i class="fas fa-times mr-2"></i> Cancelar
+        </button>
+        <button 
+          type="submit" 
+          [disabled]="ventaForm.invalid || loading"
+          class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-8 rounded-lg transition duration-200 flex items-center">
+          <div *ngIf="loading" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+          <i *ngIf="!loading" class="fas fa-save mr-2"></i>
+          {{ loading ? 'Registrando...' : 'Registrar Venta' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Mensaje cuando no hay cliente seleccionado -->
+  <div *ngIf="!clienteSeleccionado && !mostrarFormularioCliente" class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+    <i class="fas fa-info-circle text-yellow-600 text-3xl mb-4"></i>
+    <h3 class="text-lg font-semibold text-gray-800 mb-2">Seleccione un Cliente</h3>
+    <p class="text-gray-600">Para continuar con el registro de la venta, primero debe seleccionar o registrar un cliente.</p>
+  </div>
+</main> 
