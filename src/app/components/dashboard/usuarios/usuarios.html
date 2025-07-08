@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Contenido principal dinámico -->
+    <main class="container mx-auto p-6 flex-grow">
+        <div id="users-section" class="content-section p-6">
+            <h2 class="mb-4 text-2xl font-semibold text-gray-800">Gestión de Usuarios</h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-end mb-4">
+                    <button (click)="abrirModalRegistro()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-150 ease-in-out">
+                        <i class="fas fa-user-plus mr-2"></i> Añadir Nuevo Usuario
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            (input)="onBusquedaChange($event)"
+                            [value]="terminoBusqueda"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 pr-10" 
+                            placeholder="Buscar por nombre, apellido, celular, dirección, sexo, ID...">
+                        <button 
+                            *ngIf="terminoBusqueda.trim()"
+                            (click)="limpiarBusqueda()"
+                            type="button"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">
+                        <span *ngIf="terminoBusqueda.trim()">
+                            <i class="fas fa-search mr-1"></i>
+                            {{ usuariosFiltrados.length }} de {{ usuarios.length }} usuarios encontrados
+                        </span>
+                        <span *ngIf="!terminoBusqueda.trim()">
+                            <i class="fas fa-users mr-1"></i>
+                            {{ usuarios.length }} usuarios en total
+                        </span>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apellido</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sexo</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dirección</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Celular</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID User</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr *ngFor="let usuario of usuariosFiltrados">
+                                <td class="px-6 py-4 whitespace-nowrap">{{ usuario.identificador }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ usuario.nombre }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ usuario.apellido }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ usuario.sexo }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ usuario.direccion }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ usuario.celular }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap" [ngClass]="usuario.estado ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
+                                    {{ usuario.estado ? 'Activo' : 'Inactivo' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ usuario.idUser || 'N/A' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex justify-end items-center space-x-2">
+                                        <button (click)="abrirModalEdicion(usuario)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button (click)="eliminarUsuario(usuario)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm" [disabled]="usuarioEliminandoId === usuario.identificador">
+                                            <span *ngIf="usuarioEliminandoId === usuario.identificador" class="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1 align-middle"></span>
+                                            <i class="fas fa-trash-alt align-middle"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="usuariosFiltrados.length === 0">
+                                <td colspan="9" class="px-6 py-4 text-center text-gray-500">
+                                    <div *ngIf="terminoBusqueda.trim()">
+                                        <i class="fas fa-search text-2xl mb-2"></i>
+                                        <p>No se encontraron usuarios que coincidan con "{{ terminoBusqueda }}"</p>
+                                        <p class="text-sm mt-1">Intenta con otros términos de búsqueda</p>
+                                    </div>
+                                    <div *ngIf="!terminoBusqueda.trim()">
+                                        <i class="fas fa-users text-2xl mb-2"></i>
+                                        <p>No hay usuarios registrados</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal genérico para Usuarios -->
+    <div *ngIf="mostrarModalRegistro" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="relative p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white transform transition-transform duration-300 scale-100">
+            <div class="flex justify-between items-center pb-3">
+                <h5 class="text-xl font-medium" id="userModalLabel">Añadir Nuevo Usuario</h5>
+                <button (click)="cerrarModalRegistro()" type="button" class="text-gray-400 hover:text-gray-600 focus:outline-none" aria-label="Close">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mt-2">
+                <form [formGroup]="usuarioForm" (ngSubmit)="registrarUsuario()">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+                            <input 
+                                type="text" 
+                                formControlName="nombre"
+                                class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                [ngClass]="esCampoInvalido('nombre') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                id="userName" 
+                                placeholder="Nombre del usuario">
+                            <div *ngIf="esCampoInvalido('nombre')" class="text-red-500 text-xs mt-1">
+                                {{ obtenerMensajeError('nombre') }}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="userApellido" class="block text-sm font-medium text-gray-700 mb-1">Apellido *</label>
+                            <input 
+                                type="text" 
+                                formControlName="apellido"
+                                class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                [ngClass]="esCampoInvalido('apellido') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                id="userApellido" 
+                                placeholder="Apellido del usuario">
+                            <div *ngIf="esCampoInvalido('apellido')" class="text-red-500 text-xs mt-1">
+                                {{ obtenerMensajeError('apellido') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="userSexo" class="block text-sm font-medium text-gray-700 mb-1">Sexo *</label>
+                            <select 
+                                formControlName="sexo"
+                                class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                [ngClass]="esCampoInvalido('sexo') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                id="userSexo">
+                                <option value="">Seleccionar sexo</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                            <div *ngIf="esCampoInvalido('sexo')" class="text-red-500 text-xs mt-1">
+                                {{ obtenerMensajeError('sexo') }}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="userCelular" class="block text-sm font-medium text-gray-700 mb-1">Celular *</label>
+                            <input 
+                                type="tel" 
+                                formControlName="celular"
+                                class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                [ngClass]="esCampoInvalido('celular') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                id="userCelular" 
+                                placeholder="Número de celular (9-10 dígitos)">
+                            <div *ngIf="esCampoInvalido('celular')" class="text-red-500 text-xs mt-1">
+                                {{ obtenerMensajeError('celular') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="userDireccion" class="block text-sm font-medium text-gray-700 mb-1">Dirección *</label>
+                        <input 
+                            type="text" 
+                            formControlName="direccion"
+                            class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            [ngClass]="esCampoInvalido('direccion') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                            id="userDireccion" 
+                            placeholder="Dirección completa">
+                        <div *ngIf="esCampoInvalido('direccion')" class="text-red-500 text-xs mt-1">
+                            {{ obtenerMensajeError('direccion') }}
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label for="userStatus" class="block text-sm font-medium text-gray-700 mb-1">Estado *</label>
+                        <select 
+                            formControlName="estado"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            id="userStatus">
+                            <option [ngValue]="true">Activo</option>
+                            <option [ngValue]="false">Inactivo</option>
+                        </select>
+                    </div>
+
+                    <!-- Opción para crear credenciales de acceso -->
+                    <div class="mb-6">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" [(ngModel)]="crearCredenciales" [ngModelOptions]="{standalone: true}"
+                                   class="rounded bg-gray-100 border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="text-sm font-medium text-gray-700">Crear credenciales de acceso (username, email, password)</span>
+                        </label>
+                        <div class="text-gray-500 text-xs mt-1">
+                            Si marcas esta opción, se creará automáticamente un registro en la tabla User con credenciales de acceso
+                        </div>
+                    </div>
+
+                    <!-- Campos de credenciales (condicionales) -->
+                    <div *ngIf="crearCredenciales" class="space-y-4 mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h4 class="text-sm font-medium text-blue-800 mb-3">Credenciales de Acceso</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="userUsername" class="block text-sm font-medium text-gray-700 mb-1">Nombre de Usuario *</label>
+                                <input 
+                                    type="text" 
+                                    formControlName="username"
+                                    class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    [ngClass]="esCampoInvalido('username') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                    id="userUsername" 
+                                    placeholder="Nombre de usuario para login">
+                                <div *ngIf="esCampoInvalido('username')" class="text-red-500 text-xs mt-1">
+                                    {{ obtenerMensajeError('username') }}
+                                </div>
+                            </div>
+                            <div>
+                                <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                                <input 
+                                    type="email" 
+                                    formControlName="email"
+                                    class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    [ngClass]="esCampoInvalido('email') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                    id="userEmail" 
+                                    placeholder="Email para login">
+                                <div *ngIf="esCampoInvalido('email')" class="text-red-500 text-xs mt-1">
+                                    {{ obtenerMensajeError('email') }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="userPassword" class="block text-sm font-medium text-gray-700 mb-1">Contraseña *</label>
+                                <input 
+                                    type="password" 
+                                    formControlName="password"
+                                    class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    [ngClass]="esCampoInvalido('password') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                    id="userPassword" 
+                                    placeholder="Mínimo 6 caracteres">
+                                <div *ngIf="esCampoInvalido('password')" class="text-red-500 text-xs mt-1">
+                                    {{ obtenerMensajeError('password') }}
+                                </div>
+                            </div>
+                            <div>
+                                <label for="userConfirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirmar Contraseña *</label>
+                                <input 
+                                    type="password" 
+                                    formControlName="confirmPassword"
+                                    class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    [ngClass]="esCampoInvalido('confirmPassword') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                    id="userConfirmPassword" 
+                                    placeholder="Repite la contraseña">
+                                <div *ngIf="esCampoInvalido('confirmPassword')" class="text-red-500 text-xs mt-1">
+                                    {{ obtenerMensajeError('confirmPassword') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opción para vincular con User existente (solo si no se crean credenciales) -->
+                    <div *ngIf="!crearCredenciales" class="mb-6">
+                        <label for="userIdUser" class="block text-sm font-medium text-gray-700 mb-1">Vincular con User existente (Opcional)</label>
+                        <select 
+                            formControlName="idUser"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            id="userIdUser">
+                            <option value="">Sin asignar (crear sin relación con User)</option>
+                            <option *ngFor="let user of usersDisponibles" [value]="user.id">
+                                ID: {{ user.id }} - {{ user.username }} ({{ user.email }})
+                            </option>
+                        </select>
+                        <div class="text-gray-500 text-xs mt-1">
+                            Selecciona un User existente para vincular o déjalo sin asignar
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="flex justify-end items-center pt-4">
+                <button 
+                    (click)="cerrarModalRegistro()" 
+                    type="button" 
+                    class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md mr-2"
+                    [disabled]="isLoading">
+                    Cancelar
+                </button>
+                <button 
+                    (click)="registrarUsuario()" 
+                    type="button" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center"
+                    [disabled]="isLoading || usuarioForm.invalid">
+                    <span *ngIf="isLoading" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                    {{ isLoading ? 'Registrando...' : 'Añadir Usuario' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edición para Usuarios -->
+    <div *ngIf="mostrarModalEdicion" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="relative p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white transform transition-transform duration-300 scale-100">
+            <div class="flex justify-between items-center pb-3">
+                <h5 class="text-xl font-medium" id="userEditModalLabel">Editar Usuario</h5>
+                <button (click)="cerrarModalEdicion()" type="button" class="text-gray-400 hover:text-gray-600 focus:outline-none" aria-label="Close">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mt-2">
+                <form [formGroup]="usuarioForm" (ngSubmit)="actualizarUsuario()">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="editUserName" class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+                            <input 
+                                type="text" 
+                                formControlName="nombre"
+                                class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                [ngClass]="esCampoInvalido('nombre') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                id="editUserName" 
+                                placeholder="Nombre del usuario">
+                            <div *ngIf="esCampoInvalido('nombre')" class="text-red-500 text-xs mt-1">
+                                {{ obtenerMensajeError('nombre') }}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="editUserApellido" class="block text-sm font-medium text-gray-700 mb-1">Apellido *</label>
+                            <input 
+                                type="text" 
+                                formControlName="apellido"
+                                class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                [ngClass]="esCampoInvalido('apellido') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                id="editUserApellido" 
+                                placeholder="Apellido del usuario">
+                            <div *ngIf="esCampoInvalido('apellido')" class="text-red-500 text-xs mt-1">
+                                {{ obtenerMensajeError('apellido') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="editUserSexo" class="block text-sm font-medium text-gray-700 mb-1">Sexo *</label>
+                            <select 
+                                formControlName="sexo"
+                                class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                [ngClass]="esCampoInvalido('sexo') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                id="editUserSexo">
+                                <option value="">Seleccionar sexo</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                            <div *ngIf="esCampoInvalido('sexo')" class="text-red-500 text-xs mt-1">
+                                {{ obtenerMensajeError('sexo') }}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="editUserCelular" class="block text-sm font-medium text-gray-700 mb-1">Celular *</label>
+                            <input 
+                                type="tel" 
+                                formControlName="celular"
+                                class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                [ngClass]="esCampoInvalido('celular') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                                id="editUserCelular" 
+                                placeholder="Número de celular (9-10 dígitos)">
+                            <div *ngIf="esCampoInvalido('celular')" class="text-red-500 text-xs mt-1">
+                                {{ obtenerMensajeError('celular') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="editUserDireccion" class="block text-sm font-medium text-gray-700 mb-1">Dirección *</label>
+                        <input 
+                            type="text" 
+                            formControlName="direccion"
+                            class="mt-1 block w-full rounded-md shadow-sm focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            [ngClass]="esCampoInvalido('direccion') ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-indigo-300'"
+                            id="editUserDireccion" 
+                            placeholder="Dirección completa">
+                        <div *ngIf="esCampoInvalido('direccion')" class="text-red-500 text-xs mt-1">
+                            {{ obtenerMensajeError('direccion') }}
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label for="editUserStatus" class="block text-sm font-medium text-gray-700 mb-1">Estado *</label>
+                            <select 
+                                formControlName="estado"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                id="editUserStatus">
+                                <option [ngValue]="true">Activo</option>
+                                <option [ngValue]="false">Inactivo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="editUserIdUser" class="block text-sm font-medium text-gray-700 mb-1">ID User (Opcional)</label>
+                            <select 
+                                formControlName="idUser"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                id="editUserIdUser">
+                                <option value="">Sin asignar (crear sin relación con User)</option>
+                                <option *ngFor="let user of usersDisponibles" [value]="user.id">
+                                    ID: {{ user.id }} - {{ user.username }} ({{ user.email }})
+                                </option>
+                            </select>
+                            <div class="text-gray-500 text-xs mt-1">
+                                Selecciona un User existente o déjalo sin asignar
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="flex justify-end items-center pt-4">
+                <button 
+                    (click)="cerrarModalEdicion()" 
+                    type="button" 
+                    class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md mr-2"
+                    [disabled]="isLoading">
+                    Cancelar
+                </button>
+                <button 
+                    (click)="actualizarUsuario()" 
+                    type="button" 
+                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md flex items-center"
+                    [disabled]="isLoading || usuarioForm.invalid">
+                    <span *ngIf="isLoading" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                    {{ isLoading ? 'Actualizando...' : 'Actualizar Usuario' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación de Eliminación -->
+    <div *ngIf="mostrarModalConfirmacion" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="relative p-5 border w-full max-w-md shadow-lg rounded-md bg-white transform transition-transform duration-300 scale-100">
+            <div class="flex justify-between items-center pb-3">
+                <h5 class="text-xl font-medium text-red-600" id="confirmModalLabel">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>Confirmar Eliminación
+                </h5>
+                <button (click)="cerrarModalConfirmacion()" type="button" class="text-gray-400 hover:text-gray-600 focus:outline-none" aria-label="Close">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mt-2">
+                <div class="text-center">
+                    <i class="fas fa-user-times text-6xl text-red-500 mb-4"></i>
+                    <p class="text-lg font-medium text-gray-900 mb-2">
+                        ¿Eliminar usuario?
+                    </p>
+                    <p class="text-gray-600 mb-4">
+                        ¿Estás seguro de que quieres eliminar al usuario <strong>"{{ usuarioEliminando?.nombre }} {{ usuarioEliminando?.apellido }}"</strong>?
+                    </p>
+                    <p class="text-sm text-red-600 mb-6">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Esta acción no se puede deshacer.
+                    </p>
+                </div>
+            </div>
+            <div class="flex justify-end items-center pt-4">
+                <button 
+                    (click)="cerrarModalConfirmacion()" 
+                    type="button" 
+                    class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-md mr-2"
+                    [disabled]="usuarioEliminandoId !== null">
+                    Cancelar
+                </button>
+                <button 
+                    (click)="confirmarEliminacion()" 
+                    type="button" 
+                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md flex items-center"
+                    [disabled]="usuarioEliminandoId !== null">
+                    <span *ngIf="usuarioEliminandoId !== null" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                    {{ usuarioEliminandoId !== null ? 'Eliminando...' : 'Eliminar Usuario' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

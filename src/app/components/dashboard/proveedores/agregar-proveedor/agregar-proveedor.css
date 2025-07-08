@@ -1,0 +1,9 @@
+/* Estilos para el modal de agregar proveedor */
+
+:host ::ng-deep .bg-green-600 {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+:host ::ng-deep .bg-green-700 {
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+} 

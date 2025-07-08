@@ -1,0 +1,109 @@
+<header class="bg-white shadow-sm z-20 w-full">
+  <div class="flex justify-between items-center px-6 py-3 w-full">
+    <!-- Sección izquierda: Menú y título -->
+    <div class="flex items-center space-x-4">
+      <button (click)="onToggleSidebar()"
+              class="text-gray-500 hover:text-gray-700 focus:outline-none">
+        <i class="fas text-xl" [ngClass]="{
+          'fa-times': isSidebarOpen && window.innerWidth < 768,
+          'fa-bars': !isSidebarOpen || window.innerWidth >= 768
+        }"></i>
+      </button>
+      <h1 class="text-xl font-semibold text-gray-900 hidden md:block">Dashboard</h1>
+    </div>
+
+    <!-- Sección central: Barra de búsqueda -->
+    <div class="hidden md:flex flex-1 max-w-2xl mx-6">
+      <div class="relative w-full">
+        <input type="text"
+               placeholder="Buscar..."
+               class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-gray-900">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="fas fa-search text-gray-400"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección derecha: Notificaciones y perfil -->
+    <div class="flex items-center space-x-4">
+      <!-- Botones de acciones rápidas -->
+      <div class="hidden md:flex space-x-2">
+        <button class="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100">
+          <i class="fas fa-bell"></i>
+        </button>
+        <button class="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100">
+          <i class="fas fa-envelope"></i>
+        </button>
+      </div>
+
+      <!-- Separador vertical -->
+      <div class="hidden md:block h-6 w-px bg-gray-200"></div>
+
+      <!-- Perfil de usuario -->
+      <div class="relative user-menu">
+        <button (click)="toggleUserMenu()"
+                class="flex items-center space-x-3 focus:outline-none">
+          <img class="h-8 w-8 rounded-full object-cover border-2 border-gray-200"
+               src="/auth/perfil/roosivelt.png"
+               alt="Foto de perfil">
+          <div class="hidden md:block text-left">
+            <p class="text-sm font-medium text-gray-700">{{ getUserName() }}</p>
+            <p class="text-xs text-gray-500">Administrador</p>
+          </div>
+          <i class="fas fa-chevron-down text-gray-400 hidden md:block"></i>
+        </button>
+
+        <!-- Menú desplegable de usuario mejorado -->
+        <div *ngIf="isUserMenuOpen"
+             class="absolute right-0 mt-3 w-60 rounded-xl shadow-lg py-2 bg-white border border-gray-400 z-50
+">
+          <!-- Cabecera del menú -->
+          <div class="px-4 py-3 border-b border-gray-100">
+            <p class="text-sm font-semibold text-gray-900">{{ getUserName() }}</p>
+            <p class="text-xs text-gray-500 mt-1">{{ getUserEmail() }}</p>
+          </div>
+
+          <!-- Enlaces principales -->
+          <div class="py-2">
+            <a href="#"
+               class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
+              <i class="fas fa-user-circle w-5 text-gray-400"></i>
+              <span>Mi Perfil</span>
+            </a>
+            <a href="#"
+               class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
+              <i class="fas fa-cog w-5 text-gray-400"></i>
+              <span>Configuración</span>
+            </a>
+            <a href="#"
+               class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
+              <i class="fas fa-bell w-5 text-gray-400"></i>
+              <span>Notificaciones</span>
+            </a>
+          </div>
+
+          <!-- Sección inferior -->
+          <div class="py-2 border-t border-gray-100">
+            <button (click)="logout()"
+                    class="flex w-full items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150">
+              <i class="fas fa-sign-out-alt w-5"></i>
+              <span>Cerrar Sesión</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barra de búsqueda móvil -->
+  <div class="md:hidden px-4 py-2 border-t border-gray-200">
+    <div class="relative">
+      <input type="text"
+             placeholder="Buscar..."
+             class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-gray-900">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <i class="fas fa-search text-gray-400"></i>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,251 @@
+<div class="container mx-auto p-6 flex-grow overflow-hidden">
+    <div id="dashboard-section" class="content-section">
+        <h2 class="mb-4 text-2xl font-semibold text-gray-800">Dashboard General</h2>
+        
+        <!-- Mensaje de error -->
+        <div *ngIf="errorMessage" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            <i class="fas fa-exclamation-circle mr-2"></i>
+            {{ errorMessage }}
+        </div>
+
+        <!-- Loading spinner -->
+        <div *ngIf="loading" class="flex justify-center items-center py-8">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="ml-2">Cargando estadísticas...</span>
+        </div>
+
+        <!-- Estadísticas principales -->
+        <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white rounded-lg shadow-md p-6 metric-card hover:shadow-lg transition-shadow cursor-pointer" (click)="navegarAAutos()">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-car text-4xl text-blue-500"></i>
+                    <div>
+                        <div class="text-3xl font-bold text-gray-900">{{ stats.totalAutos }}</div>
+                        <div class="text-sm text-gray-500">Total de Autos</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 metric-card hover:shadow-lg transition-shadow cursor-pointer" (click)="navegarAVentas()">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-dollar-sign text-4xl text-green-600"></i>
+                    <div>
+                        <div class="text-3xl font-bold text-gray-900">{{ stats.totalVentas }}</div>
+                        <div class="text-sm text-gray-500">Ventas Realizadas</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 metric-card hover:shadow-lg transition-shadow cursor-pointer" (click)="navegarAAutos()">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-boxes text-4xl text-yellow-600"></i>
+                    <div>
+                        <div class="text-3xl font-bold text-gray-900">{{ stats.stockDisponible }}</div>
+                        <div class="text-sm text-gray-500">Stock Disponible</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 metric-card hover:shadow-lg transition-shadow cursor-pointer" (click)="navegarAClientes()">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-users text-4xl text-purple-600"></i>
+                    <div>
+                        <div class="text-3xl font-bold text-gray-900">{{ stats.totalClientes }}</div>
+                        <div class="text-sm text-gray-500">Total Clientes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas secundarias -->
+        <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+            <div class="bg-white rounded-lg shadow-md p-6 metric-card hover:shadow-lg transition-shadow cursor-pointer" (click)="navegarAPagos()">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-credit-card text-4xl text-orange-500"></i>
+                    <div>
+                        <div class="text-2xl font-bold text-gray-900">{{ stats.totalPagos }}</div>
+                        <div class="text-sm text-gray-500">Pagos Registrados</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 metric-card hover:shadow-lg transition-shadow cursor-pointer" (click)="navegarAProveedores()">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-truck text-4xl text-indigo-600"></i>
+                    <div>
+                        <div class="text-2xl font-bold text-gray-900">{{ stats.totalProveedores }}</div>
+                        <div class="text-sm text-gray-500">Proveedores</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 metric-card">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-chart-line text-4xl text-emerald-600"></i>
+                    <div>
+                        <div class="text-2xl font-bold text-gray-900">S/ {{ stats.ingresosTotales | number:'1.0-0' }}</div>
+                        <div class="text-sm text-gray-500">Ingresos Totales</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6 metric-card">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-exclamation-triangle text-4xl text-red-500"></i>
+                    <div>
+                        <div class="text-2xl font-bold text-gray-900">{{ stats.autosSinStock }}</div>
+                        <div class="text-sm text-gray-500">Sin Stock</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+            <!-- Actividad Reciente -->
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="bg-green-500 text-white p-4 rounded-t-lg font-semibold flex justify-between items-center">
+                    <span>Actividad Reciente</span>
+                    <button (click)="cargarDatos()" class="text-white hover:text-gray-200">
+                        <i class="fas fa-refresh"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div *ngIf="actividades.length === 0" class="text-center text-gray-500 py-4">
+                        <i class="fas fa-info-circle text-2xl mb-2"></i>
+                        <p>No hay actividad reciente</p>
+                    </div>
+                    <ul *ngIf="actividades.length > 0" class="divide-y divide-gray-200">
+                        <li *ngFor="let actividad of actividades" class="py-3 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <i [class]="actividad.icono + ' mr-2 text-' + actividad.color + '-500'"></i>
+                                <span class="text-sm">{{ actividad.descripcion }}</span>
+                            </div>
+                            <span class="bg-gray-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                                {{ formatearTiempoRelativo(actividad.fecha) }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Alertas del Sistema -->
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="bg-blue-400 text-white p-4 rounded-t-lg font-semibold">
+                    Alertas del Sistema
+                </div>
+                <div class="p-4">
+                    <div *ngIf="alertas.length === 0" class="text-center text-gray-500 py-4">
+                        <i class="fas fa-check-circle text-2xl mb-2 text-green-500"></i>
+                        <p>No hay alertas activas</p>
+                    </div>
+                    <div *ngIf="alertas.length > 0" class="space-y-3">
+                        <div *ngFor="let alerta of alertas" 
+                             class="p-3 rounded-lg border-l-4"
+                             [ngClass]="{
+                               'bg-green-50 border-green-400': alerta.tipo === 'success',
+                               'bg-yellow-50 border-yellow-400': alerta.tipo === 'warning',
+                               'bg-red-50 border-red-400': alerta.tipo === 'danger'
+                             }">
+                            <div class="flex items-center">
+                                <i [class]="alerta.icono + ' mr-2'"
+                                   [ngClass]="{
+                                     'text-green-500': alerta.tipo === 'success',
+                                     'text-yellow-500': alerta.tipo === 'warning',
+                                     'text-red-500': alerta.tipo === 'danger'
+                                   }"></i>
+                                <div>
+                                    <div class="font-semibold text-sm">{{ alerta.titulo }}</div>
+                                    <div class="text-xs text-gray-600">{{ alerta.mensaje }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="bg-white rounded-lg shadow-md mt-8">
+            <div class="bg-blue-400 text-white p-4 rounded-t-lg font-semibold">
+                Acciones Rápidas
+            </div>
+            <div class="p-4 flex flex-col space-y-3">
+                <button (click)="navegarAAutos()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full transition-colors">
+                    <i class="fas fa-plus-circle mr-2"></i> Gestionar Autos
+                </button>
+                <button (click)="navegarAVentas()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full transition-colors">
+                    <i class="fas fa-dollar-sign mr-2"></i> Registrar Venta
+                </button>
+                <button (click)="navegarAClientes()" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full transition-colors">
+                    <i class="fas fa-user-plus mr-2"></i> Gestionar Clientes
+                </button>
+                <button (click)="navegarAPagos()" class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full transition-colors">
+                    <i class="fas fa-credit-card mr-2"></i> Ver Pagos
+                </button>
+            </div>
+        </div>
+
+        <!-- Estadísticas Adicionales -->
+        <div *ngIf="!loading" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+            <!-- Top Autos Vendidos -->
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="bg-indigo-500 text-white p-4 rounded-t-lg font-semibold">
+                    Top Autos Más Vendidos
+                </div>
+                <div class="p-4">
+                    <div *ngIf="topAutosVendidos.length === 0" class="text-center text-gray-500 py-4">
+                        <i class="fas fa-chart-bar text-2xl mb-2"></i>
+                        <p>No hay datos de ventas</p>
+                    </div>
+                    <div *ngIf="topAutosVendidos.length > 0" class="space-y-3">
+                        <div *ngFor="let auto of topAutosVendidos; let i = index" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <span class="bg-indigo-500 text-white text-sm font-bold rounded-full w-6 h-6 flex items-center justify-center mr-3">
+                                    {{ i + 1 }}
+                                </span>
+                                <div>
+                                    <div class="font-semibold text-sm">{{ auto.nombre }}</div>
+                                    <div class="text-xs text-gray-500">{{ auto.ventas }} venta(s)</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-semibold text-sm text-green-600">S/ {{ auto.ingresos | number:'1.0-0' }}</div>
+                                <div class="text-xs text-gray-500">Ingresos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen Financiero -->
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="bg-emerald-500 text-white p-4 rounded-t-lg font-semibold">
+                    Resumen Financiero
+                </div>
+                <div class="p-4 space-y-4">
+                    <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                        <div>
+                            <div class="font-semibold text-green-800">Ingresos Totales</div>
+                            <div class="text-sm text-green-600">Todos los pagos registrados</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-green-800">S/ {{ stats.ingresosTotales | number:'1.0-0' }}</div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                        <div>
+                            <div class="font-semibold text-blue-800">Promedio por Venta</div>
+                            <div class="text-sm text-blue-600">Valor promedio de ventas</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-blue-800">S/ {{ stats.promedioVenta | number:'1.0-0' }}</div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                        <div>
+                            <div class="font-semibold text-purple-800">Total de Ventas</div>
+                            <div class="text-sm text-purple-600">Ventas realizadas</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-purple-800">{{ stats.totalVentas }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

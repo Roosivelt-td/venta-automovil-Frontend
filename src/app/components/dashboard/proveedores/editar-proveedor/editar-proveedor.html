@@ -1,0 +1,74 @@
+<div *ngIf="mostrarModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+  <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <!-- Header del modal -->
+    <div class="flex items-center justify-between p-6 border-b border-gray-200">
+      <h3 class="text-xl font-semibold text-gray-900">
+        <i class="fas fa-edit mr-2 text-blue-600"></i>
+        Editar Proveedor
+      </h3>
+      <button (click)="cerrarModal()" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Mensajes de estado -->
+    <div *ngIf="successMessage" class="mx-6 mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+      <i class="fas fa-check-circle mr-2"></i>
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="mx-6 mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+      <i class="fas fa-exclamation-circle mr-2"></i>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="proveedorForm" (ngSubmit)="onSubmit()" class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Nombre de Empresa -->
+        <div class="col-span-full">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de Empresa <span class="text-red-500">*</span></label>
+          <input type="text" formControlName="nombreEmpresa" [class.border-red-500]="esCampoInvalido('nombreEmpresa')" placeholder="Ej: AutoParts S.A.C." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <p *ngIf="esCampoInvalido('nombreEmpresa')" class="text-red-500 text-sm mt-1">{{ obtenerMensajeError('nombreEmpresa') }}</p>
+        </div>
+
+        <!-- RUC -->
+        <div class="col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-2">RUC <span class="text-red-500">*</span></label>
+          <input type="text" formControlName="ruc" [class.border-red-500]="esCampoInvalido('ruc')" placeholder="20123456789" maxlength="11" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <p *ngIf="esCampoInvalido('ruc')" class="text-red-500 text-sm mt-1">{{ obtenerMensajeError('ruc') }}</p>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono <span class="text-red-500">*</span></label>
+          <input type="text" formControlName="telefono" [class.border-red-500]="esCampoInvalido('telefono')" placeholder="998877665" maxlength="9" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <p *ngIf="esCampoInvalido('telefono')" class="text-red-500 text-sm mt-1">{{ obtenerMensajeError('telefono') }}</p>
+        </div>
+
+        <!-- Contacto -->
+        <div class="col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Persona de Contacto <span class="text-red-500">*</span></label>
+          <input type="text" formControlName="contacto" [class.border-red-500]="esCampoInvalido('contacto')" placeholder="Ej: María López" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <p *ngIf="esCampoInvalido('contacto')" class="text-red-500 text-sm mt-1">{{ obtenerMensajeError('contacto') }}</p>
+        </div>
+
+        <!-- Dirección -->
+        <div class="col-span-full">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+          <textarea formControlName="direccion" [class.border-red-500]="esCampoInvalido('direccion')" rows="3" placeholder="Dirección completa de la empresa..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+          <p *ngIf="esCampoInvalido('direccion')" class="text-red-500 text-sm mt-1">{{ obtenerMensajeError('direccion') }}</p>
+        </div>
+      </div>
+
+      <!-- Botones del formulario -->
+      <div class="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200">
+        <button type="button" (click)="cerrarModal()" [disabled]="isLoading" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">Cancelar</button>
+        <button type="submit" [disabled]="proveedorForm.invalid || isLoading" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center">
+          <i *ngIf="isLoading" class="fas fa-spinner fa-spin mr-2"></i>
+          <i *ngIf="!isLoading" class="fas fa-save mr-2"></i>
+          {{ isLoading ? 'Actualizando...' : 'Actualizar Proveedor' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div> 

@@ -1,0 +1,73 @@
+<div
+  class="bg-cover bg-gradient-to-br from-[#7337FF] via-[#000000] to-[#0C7EA8]"
+  style="background-image:url(https://res.cloudinary.com/dkt1t22qc/image/upload/v1742348950/Prestataires_Documents/fopt5esl9cgvlcawz1z4.jpg)">
+  <div class="h-screen flex justify-center items-center backdrop-brightness-50">
+    <div class="flex flex-col items-center space-y-8">
+      <div class="w-[150px] md:w-[200px]">
+         <!--src="https://res.cloudinary.com/dkt1t22qc/image/upload/v1742348949/Prestataires_Documents/smj7n1bdlpjsfsotwpco.png"-->
+        <img
+          src="./logo.png"
+          alt="TyBot Logo"
+          class="cursor-pointer " />
+      </div>
+      <div
+        class="rounded-[20px] w-80 p-8 bg-[#310D84]"
+        style="box-shadow:-6px 3px 20px 4px #0000007d">
+        <h1 class="text-white text-3xl font-bold mb-4">Iniciar sesión</h1>
+        
+        <!-- Mensaje de éxito -->
+        <div *ngIf="successMessage" class="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 text-sm">
+          {{ successMessage }}
+        </div>
+        
+        <!-- Mensaje de error -->
+        <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">
+          {{ errorMessage }}
+        </div>
+        
+        <form (ngSubmit)="onSubmit()">
+          <div class="space-y-4">
+            <input
+              type="email"
+              id="username"
+              placeholder="Email"
+              [(ngModel)]="credentials.username"
+              name="username"
+              class="bg-[#8777BA] w-full p-2.5 rounded-md placeholder:text-gray-300 shadow-md shadow-blue-950" />
+            <input
+              type="password"
+              id="password"
+              placeholder="Contraseña"
+              [(ngModel)]="credentials.password"
+              name="password"
+              class="bg-[#8777BA] w-full p-2.5 rounded-md placeholder:text-gray-300 shadow-md shadow-blue-950" />
+          </div>
+          <div class="mb-4">
+               <a (click)="navigateToForgotPassword()" class="text-[#228CE0] text-sm hover:underline cursor-pointer">
+                ¿Olvidaste tu contraseña?
+              </a>
+          </div>
+          <div class="flex justify-center mb-4">
+            <!--<button (click)="navigateToDashboard()"-->
+            <!--<button (click)="navigateToDashboard()"
+              type="submit"
+              class="h-10 w-full cursor-pointer text-white rounded-md bg-gradient-to-br from-[#7336FF] to-[#3269FF] shadow-md shadow-blue-950">
+              Iniciar sesión
+            </button>-->
+                      <button type="submit" [disabled]="isLoading"
+            class="h-10 w-full cursor-pointer text-white rounded-md bg-gradient-to-br from-[#7336FF] to-[#3269FF] shadow-md shadow-blue-950">
+
+            {{ isLoading ? 'Cargando...' : 'Iniciar sesión' }}
+          </button>
+          </div>
+        </form>
+        <div class="text-gray-300 text-center" *ngIf="errorMessage" class="error-message"
+        >{{ errorMessage }}
+
+          No tienes una cuenta?
+            <a (click)="navigateToRegister()" class="text-[#228CE0] cursor-pointer">Regístrate</a>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

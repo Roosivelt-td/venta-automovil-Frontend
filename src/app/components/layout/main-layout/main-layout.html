@@ -1,0 +1,34 @@
+<div class="flex h-screen bg-gray-100 overflow-hidden">
+  <!-- Overlay para móvil -->
+  <div *ngIf="!isSidebarHidden"
+       (click)="toggleSidebar()"
+       class="md:hidden fixed inset-0 bg-gray-800 bg-opacity-80 z-20">
+  </div>
+
+  <!-- Sidebar -->
+  <div class="fixed md:relative z-30 bg-gray-800 transform transition-all duration-300 ease-in-out h-full md:h-auto"
+       [ngClass]="{
+         '-translate-x-full md:w-0 md:overflow-hidden': isSidebarHidden,
+         'translate-x-0 w-full md:w-64': !isSidebarHidden
+       }">
+    <app-sidebar
+      [isSidebarHidden]="isSidebarHidden"
+      (closeSidebar)="toggleSidebar()">
+    </app-sidebar>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="flex flex-col flex-1">
+    <!-- Header -->
+    <app-header
+      [isSidebarOpen]="!isSidebarHidden"
+      (toggleSidebar)="toggleSidebar()"
+      class="w-full">
+    </app-header>
+
+    <!-- Main content -->
+    <main class="flex-1 overflow-y-auto p-4">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
