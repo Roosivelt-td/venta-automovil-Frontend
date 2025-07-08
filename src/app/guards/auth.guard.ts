@@ -16,23 +16,14 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
+    // Verificar si el usuario está logueado (sin verificar token)
     if (this.authService.isLoggedIn()) {
-      // Si la ruta es login y el usuario está autenticado, redirigir al dashboard
-      if (route.routeConfig?.path === 'login') {
-        this.router.navigate(['/dashboard']);
-        return false;
-      }
       return true;
-    }
-
-    // Si la ruta requiere autenticación y el usuario no está autenticado
-    if (route.routeConfig?.path !== 'login') {
+    } else {
+      // Si no está logueado, redirigir al login
       this.router.navigate(['/login']);
       return false;
     }
-
-    return true;
   }
-
 }
 

@@ -1,37 +1,49 @@
-import { Component } from '@angular/core';
-import {UsuarioService} from '../../../services/usuario';
-import { Usuario } from '../../../models/usuario';
+import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { UsuarioService } from '../../../services/usuario';
+import { User } from '../../../models/user';
 
 @Component({
-  selector: 'app-usuario-list',
+  selector: 'app-register',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './usuario-list.html',
   styleUrl: './usuario-list.css'
 })
-export class UsuarioList {
-  usuarios: Usuario[] = [];
+export class UsuarioList implements OnInit {
+  registerData = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    termsAccepted: false
+  };
 
-  constructor(private usuarioService: UsuarioService) { }
+  showPassword = false;
+  usuarios: User[] = [];
 
-  ngOnInit(): void {
-    this.loadUsuarios();
+  private usuarioService = inject(UsuarioService);
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.usuarioService.getUsuarios().subscribe((data: User[]) => {
+      this.usuarios = data;
+    });
   }
 
-  loadUsuarios(): void {
-    this.usuarioService.getUsuarios().subscribe(
-      (data: Usuario[]) => {
-        this.usuarios = data;
-      },
-      (error) => {
-        console.error('Error al cargar usuarios:', error);
-      }
-    );
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 
-  crearUsuario() {
-
+  onSubmit() {
+    console.log('Registration data:', this.registerData);
+    // Aquí iría la lógica para enviar los datos al servidor
+    // Por ahora solo redirigimos al login
+    this.router.navigate(['/login']);
   }
+  navigateToLogin() {
+  this.router.navigate(['/login']);}
 }

@@ -1,0 +1,63 @@
+<main class="container mx-auto p-6 flex-grow">
+  <div id="autos-section" class="content-section p-6">
+    <h2 class="mb-4 text-2xl font-semibold text-gray-800">Gestión de Autos</h2>
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex justify-end mb-4">
+        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-150 ease-in-out">
+          <i class="fas fa-plus mr-2"></i> Añadir Auto
+        </button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2">ID</th>
+              <th class="px-4 py-2">Año</th>
+              <th class="px-4 py-2">Color</th>
+              <th class="px-4 py-2">Descripción</th>
+              <th class="px-4 py-2">Estado</th>
+              <th class="px-4 py-2">Imagen</th>
+              <th class="px-4 py-2">Kilometraje</th>
+              <th class="px-4 py-2">Marca</th>
+              <th class="px-4 py-2">Modelo</th>
+              <th class="px-4 py-2">Precio</th>
+              <th class="px-4 py-2">Tipo</th>
+              <th class="px-4 py-2">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let auto of autos">
+              <td class="px-4 py-2">{{ auto.id }}</td>
+              <td class="px-4 py-2">{{ auto.anio }}</td>
+              <td class="px-4 py-2">{{ auto.color }}</td>
+              <td class="px-4 py-2">{{ auto.descripcion }}</td>
+              <td class="px-4 py-2">{{ auto.estado }}</td>
+              <td class="px-4 py-2"><img [src]="auto.imagenUrl" alt="auto" class="h-12 w-20 object-cover rounded"></td>
+              <td class="px-4 py-2">{{ auto.kilometraje }}</td>
+              <td class="px-4 py-2">{{ auto.marca }}</td>
+              <td class="px-4 py-2">{{ auto.modelo }}</td>
+              <td class="px-4 py-2">${{ auto.precio | number:'1.2-2' }}</td>
+              <td class="px-4 py-2">{{ auto.tipoCombustible }}</td>
+              <td class="px-4 py-2">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm mr-2" (click)="abrirModalEditar(auto)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal de edición de auto -->
+<app-editar-auto
+  [auto]="autoSeleccionado"
+  [mostrarModal]="mostrarModalEditar"
+  (cerrar)="cerrarModalEditar()"
+  (actualizado)="actualizarLista()">
+</app-editar-auto> 

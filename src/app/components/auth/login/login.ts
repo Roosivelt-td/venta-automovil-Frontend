@@ -1,6 +1,6 @@
 //login.ts
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../services/auth';
 import { FormsModule } from '@angular/forms';
 import {CommonModule} from '@angular/common';
@@ -13,19 +13,33 @@ import {HttpClientModule} from '@angular/common/http';
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   credentials = {
     username: '',
     password: ''
   };
   errorMessage = '';
+  successMessage = '';
   isLoading = false;
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    //private snackBar: MatSnackBar // Opcional: para mostrar mensajes
+    private route: ActivatedRoute
     ) { }
+
+  ngOnInit() {
+    // Verificar si hay mensaje de éxito en los query params
+    this.route.queryParams.subscribe(params => {
+      if (params['message']) {
+        this.successMessage = params['message'];
+        // Limpiar el mensaje después de 5 segundos
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 5000);
+      }
+    });
+  }
 
   onSubmit(): void {
     if (!this.credentials.username || !this.credentials.password) {
@@ -41,6 +55,7 @@ export class LoginComponent {
         next: (response) => {
           console.log('Login exitoso');
           this.isLoading = false;
+          // Redirigir automáticamente al dashboard
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
@@ -51,14 +66,15 @@ export class LoginComponent {
       });
   }
 
-
-
   navigateToRegister() {
     this.router.navigate(['/register']);
   }
+  
   navigateToForgotPassword() {
     this.router.navigate(['/forgot-password']);
   }
-    navigateToDashboard() {
-      this.router.navigate(['/dashboard']);}
+  
+  navigateToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
 }

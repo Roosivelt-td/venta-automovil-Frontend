@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Proveedores</title>
+    <script src=" `https://cdn.tailwindcss.com` "></script>
+    <link href=" `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap` " rel="stylesheet">
+    <link rel="stylesheet" href=" `https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css` ">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Contenido principal dinámico -->
+    <main class="container mx-auto p-6 flex-grow">
+        <div id="suppliers-section" class="content-section p-6">
+            <h2 class="mb-4 text-2xl font-semibold text-gray-800">Gestión de Proveedores</h2>
+            
+            <!-- Mensaje de error -->
+            <div *ngIf="errorMessage" class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                {{ errorMessage }}
+            </div>
+
+            <!-- Estado de carga -->
+            <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
+                    <p class="text-gray-600">Cargando proveedores...</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6" *ngIf="!isLoading">
+                <div class="flex justify-end mb-4">
+                    <button (click)="abrirModalRegistro()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-150 ease-in-out">
+                        <i class="fas fa-plus mr-2"></i> Añadir Nuevo Proveedor
+                    </button>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            [(ngModel)]="terminoBusqueda"
+                            (input)="onBusquedaChange()"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 pl-10" 
+                            placeholder="Buscar por nombre de empresa, RUC, contacto...">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <button 
+                            *ngIf="terminoBusqueda"
+                            (click)="limpiarBusqueda()"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre Empresa</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RUC</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contacto</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr *ngFor="let proveedor of proveedoresFiltrados" class="hover:bg-gray-50 transition-colors duration-200">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ proveedor.identificador }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ proveedor.nombreEmpresa }}</div>
+                                    <div *ngIf="proveedor.direccion" class="text-sm text-gray-500">{{ proveedor.direccion }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ proveedor.ruc }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ proveedor.contacto }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ proveedor.telefono }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <button 
+                                            (click)="editarProveedor(proveedor.identificador!)"
+                                            class="text-blue-600 hover:text-blue-900 transition-colors duration-200">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button 
+                                            (click)="eliminarProveedor(proveedor.identificador!)"
+                                            class="text-red-600 hover:text-red-900 transition-colors duration-200">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Mensaje cuando no hay proveedores -->
+                    <div *ngIf="proveedoresFiltrados.length === 0 && !isLoading" class="text-center py-12">
+                        <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">
+                            {{ terminoBusqueda ? 'No se encontraron proveedores' : 'No hay proveedores registrados' }}
+                        </h3>
+                        <p class="text-gray-500 mb-4">
+                            {{ terminoBusqueda ? 'Intenta con otros términos de búsqueda' : 'Comienza añadiendo tu primer proveedor al sistema.' }}
+                        </p>
+                        <button 
+                            *ngIf="!terminoBusqueda"
+                            (click)="abrirModalRegistro()"
+                            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
+                            <i class="fas fa-plus mr-2"></i>
+                            Añadir Primer Proveedor
+                        </button>
+                        <button 
+                            *ngIf="terminoBusqueda"
+                            (click)="limpiarBusqueda()"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                            <i class="fas fa-times mr-2"></i>
+                            Limpiar Búsqueda
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de edición de proveedor -->
+    <app-editar-proveedor
+      [proveedor]="proveedorSeleccionado"
+      [mostrarModal]="mostrarModalEditar"
+      (cerrar)="cerrarModalEditar()"
+      (actualizado)="actualizarLista()">
+    </app-editar-proveedor>
+</body>
+</html>

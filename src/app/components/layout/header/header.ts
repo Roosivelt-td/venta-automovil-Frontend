@@ -18,6 +18,15 @@ export class HeaderComponent {
 
   constructor(private authService: AuthService) {}
 
+  // Métodos para obtener datos del usuario
+  getUserName(): string {
+    return this.authService.getUserName();
+  }
+
+  getUserEmail(): string {
+    return this.authService.getUserEmail();
+  }
+
   onToggleSidebar(): void {
     this.toggleSidebar.emit();
   }

@@ -1,9 +1,9 @@
 export interface Usuario {
-  identificador: number;
+  identificador?: number;
   nombre: string;
   apellido: string;
-  sexo: string;
-  celular: string;
-  direccion: string;
-  estado: boolean;
+  correo: string;
+  contrasena?: string;
+  rol: string;
+  estado?: boolean;
 }

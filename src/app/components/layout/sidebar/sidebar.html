@@ -43,32 +43,28 @@
       </a>
       <hr>
       <!-- Ventas -->
-      <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
+      <a routerLink="/dashboard/ventas" routerLinkActive="bg-gray-800" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
         <i class="fas fa-handshake pe-2"></i> <span>Ventas</span>
-      </a>
-      <!-- Inventario -->
-      <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
-        <i class="fas fa-warehouse pe-2"></i><span>Inventario</span>
       </a>
 
       <!-- clientes -->
-      <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
+      <a routerLink="/dashboard/clientes" routerLinkActive="bg-gray-800" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
         <i class="fas fa-users pe-2"></i> <span>Clientes</span>
       </a>
       <!-- Proveedores -->
-      <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
+      <a routerLink="/dashboard/proveedores" routerLinkActive="bg-gray-800" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
         <i class="fas fa-truck pe-2"></i> <span>Proveedores</span>
       </a>
       <!-- pagos -->
-      <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
-        <i class="fas fa-money-check-alt pe-2"></i> <span>Pagos</span>
-      </a>
-      <!-- Reembolsos -->
-      <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
-        <i class="fas fa-undo pe-2"></i> <span>Reembolsos</span>
-      </a>
+       <a routerLink="/dashboard/pagos" routerLinkActive="bg-gray-800" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
+         <i class="fas fa-money-bill-wave pe-2"></i> <span>Pagos</span>
+       </a>
+       <!-- Reembolsos -->
+       <a routerLink="/dashboard/reembolsos" routerLinkActive="bg-gray-800" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
+         <i class="fas fa-undo pe-2"></i> <span>Reembolsos</span>
+       </a>
       <!-- usuarios -->
-      <a (click)="loadUsuarios()" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
+      <a routerLink="/dashboard/usuarios" routerLinkActive="bg-gray-800" class="flex items-center px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white group transition-all duration-200">
         <i class="fas fa-user-tie pe-2"></i> <span>Usuarios</span>
       </a>
 
@@ -78,20 +74,20 @@
           (click)="toggleAutoMenu()"
           class="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white focus:outline-none">
           <div class="flex items-center">
-            <i class="fa-solid fa-car pe-2"></i><span>Autos</span>
+            <i class="fas fa-car pe-2"></i><span>Autos</span>
           </div>
-          <i class="fa-solid" [ngClass]="isAutoMenuOpen ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+          <i class="fas" [ngClass]="isAutoMenuOpen ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
         </button>
         <div class="space-y-1 pl-11" [ngClass]="{'hidden': !isAutoMenuOpen}">
-          <a routerLink="/autos/agregar" routerLinkActive="bg-gray-700 text-white"
+          <a routerLink="/dashboard/autos/agregar" routerLinkActive="bg-gray-700 text-white"
              class="group flex items-center px-4 py-2 text-sm text-gray-300 rounded-md hover:bg-gray-700 hover:text-white">
             <i class="fas fa-plus-circle pe-2"></i><span>Añadir Auto</span>
           </a>
-          <a routerLink="/autos/gestionar" routerLinkActive="bg-gray-700 text-white"
+          <a routerLink="/dashboard/autos/gestionar" routerLinkActive="bg-gray-700 text-white"
              class="group flex items-center px-4 py-2 text-sm text-gray-300 rounded-md hover:bg-gray-700 hover:text-white">
             <i class="fas fa-cogs pe-2"></i><span>Gestionar Autos</span>
           </a>
-          <a routerLink="/autos/compras" routerLinkActive="bg-gray-700 text-white"
+          <a routerLink="/dashboard/autos/compras" routerLinkActive="bg-gray-700 text-white"
              class="group flex items-center px-4 py-2 text-sm text-gray-300 rounded-md hover:bg-gray-700 hover:text-white">
             <i class="fas fa-shopping-cart pe-2"></i><span>Compras</span>
           </a>
