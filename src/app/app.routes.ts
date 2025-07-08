@@ -1,4 +1,4 @@
-// app.routes.ts
+/ app.routes.ts
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/auth/login/login';
 import { RegisterComponent } from './components/auth/register/register';
@@ -34,9 +34,9 @@ export const routes: Routes = [
 
     // Todas las rutas del dashboard protegidas con AuthGuard
     {
-      path: 'dashboard',
+      path: '',
       component: MainLayoutComponent,
-      canActivate: [AuthGuard],
+      canActivate: [AuthGuard], // Protege todas las rutas hijas
       children: [
         { path: '', component: DashboardComponent },
         { path: 'usuarios', component: UsuariosListComponent },
@@ -53,9 +53,12 @@ export const routes: Routes = [
         { path: 'autos/agregar', component: AgregarAutoComponent },
         { path: 'autos/gestionar', component: GestionarAutosComponent },
         { path: 'autos/compras', component: ComprasListComponent }
+        // Otras rutas del panel aquí
       ]
     },
 
-    // Redirección global para rutas no encontradas
-    { path: '**', redirectTo: '/login' }
+   // Redirecciones globales
+
+    { path: '', redirectTo: '/login', pathMatch: 'full' },
+    { path: '**', redirectTo: '/login' }  //Redirige rutas desconocidas
 ];
