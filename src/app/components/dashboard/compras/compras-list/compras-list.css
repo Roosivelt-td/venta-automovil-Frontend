@@ -1,8 +1,0 @@
-/* Estilos específicos para la tabla de compras */
-.table-responsive {
-  min-height: 300px;
-}
-
-.dark .table-responsive {
-  background-color: #1a202c;
-}
